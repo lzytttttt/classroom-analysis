@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>classroom-analysis | 通用课堂实录分析与教研文章研发</title>
+<style>
+  :root{
+    --bg:#f7f4ee;
+    --ink:#1f2933;
+    --muted:#6b7280;
+    --card:#ffffffcc;
+    --line:#e8dfd2;
+    --brand:#2563eb;
+    --brand2:#10b981;
+    --warm:#f59e0b;
+    --pink:#ef5da8;
+    --shadow:0 18px 50px rgba(31,41,51,.12);
+    --radius:26px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 12% 12%, rgba(37,99,235,.14), transparent 32%),
+      radial-gradient(circle at 88% 4%, rgba(16,185,129,.16), transparent 28%),
+      radial-gradient(circle at 72% 82%, rgba(245,158,11,.18), transparent 28%),
+      var(--bg);
+    overflow-x:hidden;
+  }
+  body:before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    background-image:linear-gradient(rgba(31,41,51,.035) 1px, transparent 1px),linear-gradient(90deg, rgba(31,41,51,.035) 1px, transparent 1px);
+    background-size:38px 38px;
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), transparent 85%);
+  }
+  .shell{width:min(1160px, calc(100% - 36px)); margin:auto; position:relative; z-index:1}
+  header{padding:28px 0 18px; display:flex; justify-content:space-between; align-items:center; gap:16px}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+  .logo-mark{width:38px; height:38px; border-radius:14px; background:linear-gradient(135deg,var(--brand),var(--brand2)); display:grid; place-items:center; color:white; box-shadow:var(--shadow)}
+  nav{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+  nav a{color:var(--muted); text-decoration:none; padding:8px 12px; border:1px solid transparent; border-radius:999px; font-size:14px}
+  nav a:hover{color:var(--ink); background:white; border-color:var(--line)}
+  .hero{display:grid; grid-template-columns:1.02fr .98fr; gap:34px; align-items:center; padding:50px 0 36px}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; background:#fff8; border:1px solid var(--line); border-radius:999px; color:#415063; font-size:14px; backdrop-filter:blur(10px)}
+  h1{font-size:clamp(38px,7vw,78px); line-height:.98; margin:22px 0 18px; letter-spacing:-3px}
+  .hero p{font-size:18px; color:#4b5563; line-height:1.8; max-width:680px; margin:0 0 24px}
+  .chips{display:flex; flex-wrap:wrap; gap:10px; margin:24px 0 0}
+  .chip{padding:10px 14px; border-radius:999px; background:white; border:1px solid var(--line); color:#374151; box-shadow:0 6px 20px rgba(31,41,51,.06); font-size:14px}
+  .hero-card{background:var(--card); border:1px solid rgba(255,255,255,.75); border-radius:34px; box-shadow:var(--shadow); padding:18px; backdrop-filter:blur(16px)}
+  .svg-wrap{background:linear-gradient(145deg,#fff,#eef7ff); border:1px solid var(--line); border-radius:26px; padding:10px; overflow:hidden}
+  .panel-title{display:flex; align-items:center; justify-content:space-between; padding:10px 12px 0; color:#667085; font-size:13px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;background:#ef4444;box-shadow:15px 0 #f59e0b,30px 0 #22c55e}
+  section{padding:58px 0}
+  .section-head{display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:22px}
+  h2{font-size:clamp(28px,4vw,46px); margin:0; letter-spacing:-1.4px}
+  .lead{margin:0; color:var(--muted); line-height:1.75; max-width:560px}
+  .grid{display:grid; gap:18px}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--card); border:1px solid rgba(255,255,255,.8); border-radius:var(--radius); padding:22px; box-shadow:0 12px 36px rgba(31,41,51,.08); backdrop-filter:blur(14px)}
+  .card h3{margin:0 0 10px; font-size:20px}
+  .card p{margin:0; color:#596272; line-height:1.75; font-size:15px}
+  .num{width:34px; height:34px; display:grid; place-items:center; border-radius:12px; color:#fff; background:linear-gradient(135deg,var(--brand),var(--brand2)); font-weight:800; margin-bottom:14px}
+  .pipeline{position:relative; display:grid; grid-template-columns:repeat(5,1fr); gap:16px; align-items:stretch}
+  .pipeline:before{content:""; position:absolute; left:8%; right:8%; top:42px; height:3px; background:linear-gradient(90deg,var(--brand),var(--brand2),var(--warm)); border-radius:999px; opacity:.34}
+  .step{position:relative; background:white; border:1px solid var(--line); border-radius:22px; padding:18px; min-height:154px; box-shadow:0 10px 28px rgba(31,41,51,.07)}
+  .step:before{content:""; width:16px; height:16px; position:absolute; top:35px; left:18px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 8px rgba(37,99,235,.12); animation:pulse 2s infinite}
+  .step:nth-child(2):before{background:var(--brand2); box-shadow:0 0 0 8px rgba(16,185,129,.12); animation-delay:.2s}
+  .step:nth-child(3):before{background:var(--warm); box-shadow:0 0 0 8px rgba(245,158,11,.14); animation-delay:.4s}
+  .step:nth-child(4):before{background:var(--pink); box-shadow:0 0 0 8px rgba(239,93,168,.12); animation-delay:.6s}
+  .step:nth-child(5):before{background:#7c3aed; box-shadow:0 0 0 8px rgba(124,58,237,.12); animation-delay:.8s}
+  .step h3{padding-left:28px; margin:0 0 12px; font-size:18px}
+  .step p{margin:0; padding-left:28px; color:#667085; font-size:14px; line-height:1.7}
+  .outputs{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:stretch}
+  .report{background:#101828; color:white; border-radius:28px; padding:24px; box-shadow:var(--shadow); overflow:hidden; position:relative}
+  .report:after{content:""; position:absolute; width:220px; height:220px; right:-90px; top:-80px; border-radius:50%; background:rgba(37,99,235,.35); filter:blur(10px)}
+  .report h3{position:relative; margin:0 0 16px; font-size:22px}
+  .report ol{position:relative; columns:2; margin:0; padding-left:20px; color:#d0d5dd; line-height:1.95; font-size:14px}
+  .quote{font-size:26px; line-height:1.35; letter-spacing:-.8px; margin-bottom:14px}
+  .mini{font-size:13px; color:#8a94a6; line-height:1.7}
+  .badge{display:inline-flex; padding:7px 10px; border-radius:999px; background:#eff6ff; color:#1d4ed8; font-weight:700; font-size:12px; margin-bottom:12px}
+  .use-list{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:16px}
+  .use-item{display:flex; gap:10px; background:white; border:1px solid var(--line); border-radius:18px; padding:14px; color:#4b5563; font-size:14px; line-height:1.55}
+  .use-item b{color:var(--ink)}
+  .check{width:22px; height:22px; flex:0 0 auto; border-radius:8px; display:grid; place-items:center; color:white; background:var(--brand2); font-weight:900}
+  footer{padding:34px 0 52px; color:#7b8494; text-align:center; font-size:14px}
+  .floaty{animation:float 5s ease-in-out infinite}
+  .floaty2{animation:float 6s ease-in-out infinite reverse}
+  .draw{stroke-dasharray:760; stroke-dashoffset:760; animation:draw 3.8s ease forwards infinite alternate}
+  .flow-dot{filter:drop-shadow(0 2px 5px rgba(37,99,235,.35))}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @media (max-width:920px){.hero{grid-template-columns:1fr}.grid-3,.grid-4,.pipeline,.outputs{grid-template-columns:1fr}.pipeline:before{display:none}.report ol{columns:1} header{align-items:flex-start; flex-direction:column} nav{justify-content:flex-start}.section-head{align-items:flex-start; flex-direction:column}}
+</style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="logo"><div class="logo-mark">课</div><span>classroom-analysis</span></div>
+      <nav>
+        <a href="#what">作用</a><a href="#workflow">工作流</a><a href="#evidence">可信机制</a><a href="#output">输出</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="top">
+        <div>
+          <span class="eyebrow">Claude Code Skill · 课堂实录 → 教研文章</span>
+          <h1>把一节课<br/>变成一组可研究的证据。</h1>
+          <p>classroom-analysis 面向教研写作：读取课堂实录、师生对话或听课笔记，按时间线拆解课堂结构，识别任务、问题链、互动反馈、认知层级与学习证据，最后生成报告、改进建议和文章选题。</p>
+          <div class="chips">
+            <span class="chip">K12 / 高校 / 教师培训</span>
+            <span class="chip">公开课 / 常态课 / 示范课</span>
+            <span class="chip">新授 / 复习 / 实验 / 项目 / 写作</span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="panel-title"><span><i class="dot"></i></span><span>证据分析引擎</span></div>
+          <div class="svg-wrap">
+            <svg viewBox="0 0 720 520" width="100%" role="img" aria-label="课堂实录分析工作流动画">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+                <linearGradient id="g2" x1="0" x2="1"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef5da8"/></linearGradient>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-opacity=".18"/></filter>
+                <path id="route" d="M96 282 C180 120, 302 132, 358 252 S530 410, 624 230"/>
+              </defs>
+              <rect x="24" y="26" width="672" height="468" rx="36" fill="#ffffff" opacity=".68"/>
+              <path class="draw" d="M96 282 C180 120, 302 132, 358 252 S530 410, 624 230" fill="none" stroke="url(#g1)" stroke-width="10" stroke-linecap="round" opacity=".42"/>
+              <circle r="10" fill="#2563eb" class="flow-dot">
+                <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto"><mpath href="#route"/></animateMotion>
+              </circle>
+              <circle r="7" fill="#10b981" class="flow-dot">
+                <animateMotion dur="4.2s" begin="1.1s" repeatCount="indefinite" rotate="auto"><mpath href="#route"/></animateMotion>
+              </circle>
+              <circle r="6" fill="#f59e0b" class="flow-dot">
+                <animateMotion dur="4.2s" begin="2.2s" repeatCount="indefinite" rotate="auto"><mpath href="#route"/></animateMotion>
+              </circle>
+
+              <g class="floaty" filter="url(#shadow)">
+                <rect x="54" y="132" width="162" height="110" rx="22" fill="#f8fafc" stroke="#dbe7ff"/>
+                <text x="82" y="170" font-size="20" font-weight="700" fill="#1f2937">课堂材料</text>
+                <text x="82" y="202" font-size="14" fill="#667085">时间戳 / 对话</text>
+                <path d="M83 214 h88" stroke="#93a4bd" stroke-width="4" stroke-linecap="round"/>
+              </g>
+              <g class="floaty2" filter="url(#shadow)">
+                <rect x="276" y="70" width="168" height="112" rx="22" fill="#eff6ff" stroke="#bfdbfe"/>
+                <text x="305" y="108" font-size="20" font-weight="700" fill="#1e3a8a">结构切分</text>
+                <text x="305" y="140" font-size="14" fill="#4b63a6">环节 · 节奏 · 任务</text>
+                <circle cx="397" cy="139" r="13" fill="#2563eb" opacity=".16"/>
+              </g>
+              <g class="floaty" filter="url(#shadow)">
+                <rect x="486" y="158" width="176" height="124" rx="24" fill="#ecfdf5" stroke="#a7f3d0"/>
+                <text x="516" y="199" font-size="20" font-weight="700" fill="#065f46">深度分析</text>
+                <text x="516" y="231" font-size="14" fill="#047857">问题链 / 认知层级</text>
+                <path d="M519 244 h100" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+              </g>
+              <g class="floaty2" filter="url(#shadow)">
+                <rect x="302" y="326" width="170" height="112" rx="24" fill="#fff7ed" stroke="#fed7aa"/>
+                <text x="330" y="365" font-size="20" font-weight="700" fill="#9a3412">证据判断</text>
+                <text x="330" y="397" font-size="14" fill="#c2410c">强 / 中 / 弱 / 缺失</text>
+              </g>
+              <g class="floaty" filter="url(#shadow)">
+                <rect x="70" y="330" width="170" height="112" rx="24" fill="#fdf2f8" stroke="#fbcfe8"/>
+                <text x="98" y="369" font-size="20" font-weight="700" fill="#9d174d">教研产出</text>
+                <text x="98" y="401" font-size="14" fill="#be185d">报告 / 建议 / 大纲</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section id="what">
+        <div class="section-head">
+          <h2>这个 skill 的定位</h2>
+          <p class="lead">不是“评价老师讲得好不好”，而是把课堂材料转译为可讨论、可改进、可写作的教研证据链。</p>
+        </div>
+        <div class="grid grid-3">
+          <article class="card"><div class="num">1</div><h3>看见课堂结构</h3><p>从导入、新知建构、探究活动、练习反馈到总结迁移，按时间线还原课堂推进方式。</p></article>
+          <article class="card"><div class="num">2</div><h3>看见学习是否发生</h3><p>区分“学生参与了活动”和“学生产生了理解、应用、迁移、表达、修正或作品”。</p></article>
+          <article class="card"><div class="num">3</div><h3>看见文章选题</h3><p>从问题链、反馈、任务设计、目标一致性中提炼有问题意识和核心论点的教研文章方向。</p></article>
+        </div>
+      </section>
+
+      <section id="workflow">
+        <div class="section-head">
+          <h2>五步工作流</h2>
+          <p class="lead">先读懂文本，再做判断；先形成证据，再生成观点。页面上的每一步都对应 skill 中的分析顺序。</p>
+        </div>
+        <div class="pipeline">
+          <div class="step"><h3>输入材料</h3><p>课堂实录、师生对话、听课笔记、课堂片段或教学过程记录。</p></div>
+          <div class="step"><h3>基础识别</h3><p>判断学科、学段、课型、总时长与核心学习任务。</p></div>
+          <div class="step"><h3>课堂切分</h3><p>按时间顺序标注环节、教师行为、学生行为与学习任务。</p></div>
+          <div class="step"><h3>证据分析</h3><p>分析问题链、互动反馈、认知层级、学习证据、节奏与一致性。</p></div>
+          <div class="step"><h3>教研输出</h3><p>生成15段报告、课堂改进建议、文章选题和推荐大纲。</p></div>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <div class="section-head">
+          <h2>为什么更适合教研写作</h2>
+          <p class="lead">它把“课堂评价”升级为“课堂研究”：每个判断都要能回到具体片段。</p>
+        </div>
+        <div class="grid grid-4">
+          <article class="card"><span class="badge">证据优先</span><h3>拒绝空泛判断</h3><p>不能只写“氛围活跃”，必须说明学生在哪个片段有解释、比较、修正或产出。</p></article>
+          <article class="card"><span class="badge">行为导向</span><h3>不评价个人</h3><p>只评价课堂行为、任务质量、互动质量和学习机会，避免人格化结论。</p></article>
+          <article class="card"><span class="badge">限制说明</span><h3>不虚构缺失证据</h3><p>若缺少板书、课件、练习结果或学生作品，要明确写出分析边界。</p></article>
+          <article class="card"><span class="badge">研究转化</span><h3>从现象到论点</h3><p>文章选题必须包含问题意识、核心论点、证据基础与研究角度。</p></article>
+        </div>
+      </section>
+
+      <section id="output">
+        <div class="section-head">
+          <h2>最终能输出什么</h2>
+          <p class="lead">一份可直接进入教研讨论、磨课复盘或文章研发的结构化材料。</p>
+        </div>
+        <div class="outputs">
+          <div class="report">
+            <h3>15段标准报告骨架</h3>
+            <ol>
+              <li>课堂基本判断</li><li>课堂环节切分</li><li>教师行为分析</li><li>学生学习行为分析</li><li>问题链与互动分析</li><li>认知层级分析</li><li>学习证据分析</li><li>课堂节奏分析</li><li>目标—活动—评价一致性</li><li>课堂亮点</li><li>问题诊断</li><li>教学改进建议</li><li>可研发文章选题</li><li>推荐文章大纲</li><li>分析限制说明</li>
+            </ol>
+          </div>
+          <div class="card">
+            <div class="quote">从“这节课不错”<br/>变成“这节课哪里值得研究”。</div>
+            <p>适合用于公开课复盘、校本教研、教师培训、课堂观察报告、教研论文选题孵化，以及把零散听课笔记整理成有证据的分析文本。</p>
+            <div class="use-list">
+              <div class="use-item"><span class="check">✓</span><span><b>完整报告：</b>适合完整课堂实录</span></div>
+              <div class="use-item"><span class="check">✓</span><span><b>精简报告：</b>适合短材料或快速复盘</span></div>
+              <div class="use-item"><span class="check">✓</span><span><b>定向分析：</b>聚焦问题链、反馈或证据</span></div>
+              <div class="use-item"><span class="check">✓</span><span><b>文章研发：</b>输出选题、论点与大纲</span></div>
+            </div>
+            <p class="mini" style="margin-top:16px">一句话介绍：classroom-analysis 是一个“课堂文本证据化处理器”，把实录转成课堂观察报告、改进建议和可写作的教研问题。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>Designed for classroom-analysis · 单文件 HTML · SVG 动效 · 无外部依赖</footer>
+  </div>
+</body>
+</html>
